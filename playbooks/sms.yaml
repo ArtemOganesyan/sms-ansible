@@ -27,6 +27,46 @@
           - tar
         state: present
 
+    - name: Remove old Maven version
+      ansible.builtin.yum:
+        name: maven
+        state: absent
+
+    - name: Download Maven
+      ansible.builtin.get_url:
+        url: https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
+        dest: /opt/apache-maven-3.9.5-bin.tar.gz
+
+    - name: Extract Maven
+      ansible.builtin.unarchive:
+        src: /opt/apache-maven-3.9.5-bin.tar.gz
+        dest: /opt
+        remote_src: yes
+
+    - name: Create symbolic link for Maven
+      ansible.builtin.file:
+        src: /opt/apache-maven-3.9.5
+        dest: /opt/maven
+        state: link
+
+    - name: Create Maven environment script
+      ansible.builtin.copy:
+        dest: /etc/profile.d/maven.sh
+        content: |
+          export M2_HOME=/opt/maven
+          export PATH=${M2_HOME}/bin:${PATH}
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Source the Maven environment script
+      ansible.builtin.shell: source /etc/profile.d/maven.sh
+
+    - name: Verify Maven version
+      ansible.builtin.shell: mvn -v
+      register: maven_version
+      changed_when: false
+
     - name: Download and install NVM
       ansible.builtin.shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
