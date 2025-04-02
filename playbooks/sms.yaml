@@ -147,9 +147,10 @@
         version: HEAD
 
     - name: Install frontend dependencies
-      npm:
-        path: "{{ frontend_dir }}"
-        production: no
+      shell: /root/.nvm/versions/node/v23.11.0/bin/npm install
+      args:
+        chdir: "{{ frontend_dir }}"
+      become: true
 
     - name: Modify vite.config.mjs - imports
       replace:
@@ -196,7 +197,7 @@
         mode: '0644'
 
     - name: Run frontend app in background
-      shell: nohup npm run start -- --host 0.0.0.0 > /dev/null 2>&1 &
+      shell: nohup /root/.nvm/versions/node/v23.11.0/bin/npm run start -- --host 0.0.0.0 > /dev/null 2>&1 &
       args:
         chdir: "{{ frontend_dir }}"
       become: true
