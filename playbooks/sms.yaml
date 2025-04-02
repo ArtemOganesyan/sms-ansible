@@ -125,7 +125,7 @@
         state: reloaded
 
     - name: Build and test the backend
-      shell: mvn test
+      shell: /opt/apache-maven-3.9.5/bin/mvn test
       args:
         chdir: "{{ backend_dir }}"
       become: true
