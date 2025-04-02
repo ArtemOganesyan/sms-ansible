@@ -151,7 +151,7 @@
         version: HEAD
 
     - name: Install frontend dependencies
-      shell: npm install
+      shell: . /etc/profile.d/nvm.sh && npm install
       args:
         chdir: "{{ frontend_dir }}"
       become: true
