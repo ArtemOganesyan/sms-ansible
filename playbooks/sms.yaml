@@ -21,16 +21,10 @@
           - nginx
           - git
           - java
-          - maven
           - curl
           - unzip
           - tar
         state: present
-
-    - name: Remove old Maven version
-      ansible.builtin.yum:
-        name: maven
-        state: absent
 
     - name: Download Maven
       ansible.builtin.get_url:
@@ -61,11 +55,6 @@
 
     - name: Source the Maven environment script
       ansible.builtin.shell: source /etc/profile.d/maven.sh
-
-    - name: Verify Maven version
-      ansible.builtin.shell: mvn -v
-      register: maven_version
-      changed_when: false
 
     - name: Download and install NVM
       ansible.builtin.shell: |
