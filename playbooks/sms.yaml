@@ -151,7 +151,7 @@
         version: HEAD
 
     - name: Install frontend dependencies
-      shell: /root/.nvm/versions/node/v23.11.0/bin/npm install
+      shell: npm install
       args:
         chdir: "{{ frontend_dir }}"
       become: true
@@ -201,7 +201,7 @@
         mode: '0644'
 
     - name: Run frontend app in background
-      shell: nohup /root/.nvm/versions/node/v23.11.0/bin/npm run start -- --host 0.0.0.0 > /dev/null 2>&1 &
+      shell: nohup npm run start -- --host 0.0.0.0 > /dev/null 2>&1 &
       args:
         chdir: "{{ frontend_dir }}"
       become: true
