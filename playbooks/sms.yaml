@@ -61,10 +61,14 @@
     - name: Download and install NVM
       ansible.builtin.shell: |
         curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-        source ~/.bashrc
+        export NVM_DIR="$HOME/.nvm"
+        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
         nvm install 23
         nvm alias default 23
         nvm use 23
+        echo 'export NVM_DIR="$HOME/.nvm"' >> /etc/profile.d/nvm.sh
+        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /etc/profile.d/nvm.sh
+        echo 'export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"' >> /etc/profile.d/nvm.sh
       args:
         executable: /bin/bash
 
