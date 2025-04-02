@@ -22,9 +22,20 @@
           - git
           - java
           - maven
-          - nodejs
-          - npm
+          - curl
+          - unzip
+          - tar
         state: present
+
+    - name: Download and install NVM
+      ansible.builtin.shell: |
+        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
+        source ~/.bashrc
+        nvm install 23
+        nvm alias default 23
+        nvm use 23
+      args:
+        executable: /bin/bash
 
     - name: Enable and start nginx
       service:
