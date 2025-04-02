@@ -53,8 +53,10 @@
         group: root
         mode: '0755'
 
-    - name: Source the Maven environment script
-      ansible.builtin.shell: source /etc/profile.d/maven.sh
+    - name: Source Maven environment
+      ansible.builtin.shell: "source /etc/profile.d/maven.sh && mvn -v"
+      register: maven_version
+      changed_when: false
 
     - name: Download and install NVM
       ansible.builtin.shell: |
