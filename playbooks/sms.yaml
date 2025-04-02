@@ -15,12 +15,6 @@
     frontend_domain: test.com
 
   tasks:
-    - name: Install EPEL repository
-      ansible.builtin.yum:
-        name: epel-release
-        state: present
-      when: ansible_os_family == "RedHat"
-      
     - name: Install required packages
       package:
         name:
