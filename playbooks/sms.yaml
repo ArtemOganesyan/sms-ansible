@@ -1,7 +1,7 @@
 ---
 - name: Full Stack Deployment Playbook
   hosts: all
-  become: true
+  become: yes
 
   vars:
     backend_repo: https://github.com/ArtemOganesyan/smstests.git
@@ -21,56 +21,10 @@
           - nginx
           - git
           - java
-          - curl
-          - unzip
-          - tar
+          - maven
+          - nodejs
+          - npm
         state: present
-
-    - name: Download Maven
-      ansible.builtin.get_url:
-        url: https://dlcdn.apache.org/maven/maven-3/3.9.5/binaries/apache-maven-3.9.5-bin.tar.gz
-        dest: /opt/apache-maven-3.9.5-bin.tar.gz
-
-    - name: Extract Maven
-      ansible.builtin.unarchive:
-        src: /opt/apache-maven-3.9.5-bin.tar.gz
-        dest: /opt
-        remote_src: yes
-
-    - name: Create symbolic link for Maven
-      ansible.builtin.file:
-        src: /opt/apache-maven-3.9.5
-        dest: /opt/maven
-        state: link
-
-    - name: Create Maven environment script
-      ansible.builtin.copy:
-        dest: /etc/profile.d/maven.sh
-        content: |
-          export M2_HOME=/opt/maven
-          export PATH=${M2_HOME}/bin:${PATH}
-        owner: root
-        group: root
-        mode: '0755'
-
-    - name: Source Maven environment
-      ansible.builtin.shell: "source /etc/profile.d/maven.sh && mvn -v"
-      register: maven_version
-      changed_when: false
-
-    - name: Download and install NVM
-      ansible.builtin.shell: |
-        curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.4/install.sh | bash
-        export NVM_DIR="$HOME/.nvm"
-        [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-        nvm install 18
-        nvm alias default 18
-        nvm use 18
-        echo 'export NVM_DIR="$HOME/.nvm"' >> /etc/profile.d/nvm.sh
-        echo '[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"' >> /etc/profile.d/nvm.sh
-        echo 'export PATH="$NVM_DIR/versions/node/$(nvm version)/bin:$PATH"' >> /etc/profile.d/nvm.sh
-      args:
-        executable: /bin/bash
 
     - name: Enable and start nginx
       service:
@@ -129,7 +83,7 @@
         state: reloaded
 
     - name: Build and test the backend
-      shell: /opt/apache-maven-3.9.5/bin/mvn test
+      shell: mvn test
       args:
         chdir: "{{ backend_dir }}"
       become: true
@@ -151,10 +105,9 @@
         version: HEAD
 
     - name: Install frontend dependencies
-      shell: . /etc/profile.d/nvm.sh && npm install
-      args:
-        chdir: "{{ frontend_dir }}"
-      become: true
+      npm:
+        path: "{{ frontend_dir }}"
+        production: no
 
     - name: Modify vite.config.mjs - imports
       replace:
