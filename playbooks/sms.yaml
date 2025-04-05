@@ -95,8 +95,9 @@
       become: false
 
     - name: Remove frontend directory if it exists
-      shell: "rm -rf {{ frontend_dir }}"
-      become: true
+      file:
+        path: "{{ frontend_dir }}"
+        state: absent
 
     - name: Clone frontend project
       git:
