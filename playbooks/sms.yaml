@@ -95,8 +95,12 @@
         owner: root
         group: root
 
+    - name: Kill backend process
+      shell: "kill -9 $(lsof -ti:8080) || true"
+      ignore_errors: true
+
     - name: Run backend app in background
-      shell: mvn exec:java -Dexec.mainClass="SMS.Main"
+      shell: mvn exec:java -Dexec.mainClass="SMS.Main" &
       args:
         chdir: "{{ backend_dir }}"
       become: true
