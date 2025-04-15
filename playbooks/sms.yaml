@@ -102,9 +102,7 @@
       become: true
 
     - name: Force remove frontend directory
-      ansible.builtin.command: rm -rf {{ frontend_dir }}
-      args:
-        warn: false
+      nsible.builtin.shell: rm -rf {{ frontend_dir }}
 
     - name: Clone frontend project
       git:
