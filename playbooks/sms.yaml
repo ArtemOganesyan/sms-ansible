@@ -101,11 +101,10 @@
         chdir: "{{ backend_dir }}"
       become: true
 
-    - name: Remove frontend directory if it exists
-      file:
-        path: "{{ frontend_dir }}"
-        state: absent
-        force: yes
+    - name: Force remove frontend directory
+      ansible.builtin.command: rm -rf {{ frontend_dir }}
+      args:
+        warn: false
 
     - name: Clone frontend project
       git:
